@@ -1,13 +1,13 @@
-package com.quizit.QuizWebProject;
+package com.quizit.quizit.web.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class QuizWebProjectApplication {
+public class QuizitWebProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(QuizWebProjectApplication.class, args);
+		SpringApplication.run(QuizitWebProjectApplication.class, args);
 	}
 
 }
