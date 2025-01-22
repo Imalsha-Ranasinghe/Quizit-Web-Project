@@ -19,11 +19,7 @@ export default function Header() {
 
         {/* Call-to-Action Button */}
         <div>
-          <a 
-            href="/login" 
-            className=" bg-blue-300 hover:bg-blue-200 text-blue-800 px-6 py-2 rounded-full font-bold transition">
-            Login
-          </a>
+          
         </div>
       </div>
     </header>
