@@ -13,7 +13,7 @@ export default function Login() {
       {/* Content Section */}
       <div className="flex-grow flex items-center justify-center">
         {/* Gradient Border Wrapper */}
-        <div className="p-[2px] bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 rounded-lg shadow-lg w-full max-w-lg">
+        <div className="p-[2px] bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 rounded-lg shadow-lime-800 w-full max-w-lg">
           {/* Form Content */}
           <div className="bg-white p-8 rounded-lg">
             <h2 className="text-2xl font-bold text-center text-green-800">
