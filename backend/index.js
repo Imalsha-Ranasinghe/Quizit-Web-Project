@@ -24,4 +24,9 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Store the server instance in a variable
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Export the app and server for testing
+module.exports = { app, server };
