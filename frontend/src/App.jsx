@@ -5,7 +5,8 @@ import Login from "./components/Login";
 import SignUp from "./components/Signup";
 import Home from "./components/Home";
 import QuizCreation from "./pages/quiz_management/QuizCreation";
-import MyQuizzes from "./pages/quiz_management/MyQuizzes";
+import QuizList from "./pages/quiz_management/QuizList";
+import QuizDetail from "./components/QuizDetail";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/home" element={<Home />} />
         <Route path="/create-quiz" element={<QuizCreation />} />
-        <Route path="/my-quizzes" element={<MyQuizzes />} />
+        <Route path="/quiz-list" element={<QuizList/>} />
+        <Route path="/quiz/:id" element={<QuizDetail />} />
       </Routes>
     
   );
