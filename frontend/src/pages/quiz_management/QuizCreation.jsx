@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { FaPlus, FaTrash, FaCheckCircle, FaCheck } from 'react-icons/fa';
-import Header from '../components/Header';
-
+import React, { useState } from "react";
+import { FaPlus, FaTrash, FaCheckCircle, FaCheck } from "react-icons/fa";
+import Header from "../../components/Header";
 
 export default function QuizCreation() {
   const [questions, setQuestions] = useState([
-    { type: 'multiple', question: '', options: ['', '', '', ''], answer: '' },
+    { type: "multiple", question: "", options: ["", "", "", ""], answer: "" },
   ]);
 
   const handleAddQuestion = () => {
     setQuestions([
       ...questions,
-      { type: 'multiple', question: '', options: ['', '', '', ''], answer: '' },
+      { type: "multiple", question: "", options: ["", "", "", ""], answer: "" },
     ]);
   };
 
@@ -23,14 +22,14 @@ export default function QuizCreation() {
 
   const handleInputChange = (e, index, field) => {
     const updatedQuestions = [...questions];
-    if (field === 'question') {
+    if (field === "question") {
       updatedQuestions[index].question = e.target.value;
-    } else if (field === 'answer') {
+    } else if (field === "answer") {
       updatedQuestions[index].answer = e.target.value;
-    } else if (field === 'type') {
+    } else if (field === "type") {
       updatedQuestions[index].type = e.target.value;
     } else {
-      const optionIndex = parseInt(field.split('-')[1], 10);
+      const optionIndex = parseInt(field.split("-")[1], 10);
       updatedQuestions[index].options[optionIndex] = e.target.value;
     }
     setQuestions(updatedQuestions);
@@ -49,8 +48,63 @@ export default function QuizCreation() {
       </header>
 
       {/* Quiz Form */}
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+      <div className="max-w-full mx-12 bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
         <form>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Quiz Title :
+            </label>
+            <input
+              type="text"
+              placeholder="Enter the quiz title"
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            />
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Description :
+            </label>
+            <input
+              type="text"
+              placeholder="Enter the description"
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+              Difficulty Level
+            </label>
+            <select
+              onChange={(e) => handleInputChange(e, index, "type")}
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="difficult">Difficult</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+              Quiz Type
+            </label>
+            <select
+              onChange={(e) => handleInputChange(e, index, "type")}
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            >
+              <option value="private">Private</option>
+              <option value="public">Public</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+              Quiz Category
+            </label>
+            <select
+              onChange={(e) => handleInputChange(e, index, "type")}
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            >
+              <option value="knowledge">General Knowledge</option>
+              <option value="science">Science</option>
+              <option value="sports">Sports</option>
+              <option value="history">General History</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
           {questions.map((question, index) => (
             <div
               key={index}
@@ -77,7 +131,7 @@ export default function QuizCreation() {
                 </label>
                 <select
                   value={question.type}
-                  onChange={(e) => handleInputChange(e, index, 'type')}
+                  onChange={(e) => handleInputChange(e, index, "type")}
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                 >
                   <option value="multiple">Multiple Choice</option>
@@ -99,13 +153,13 @@ export default function QuizCreation() {
                   type="text"
                   placeholder="Enter your question"
                   value={question.question}
-                  onChange={(e) => handleInputChange(e, index, 'question')}
+                  onChange={(e) => handleInputChange(e, index, "question")}
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                 />
               </div>
 
               {/* Options (Multiple Choice) */}
-              {question.type === 'multiple' && (
+              {question.type === "multiple" && (
                 <div className="grid grid-cols-2 gap-4">
                   {question.options.map((option, optIndex) => (
                     <div key={optIndex} className="mb-3 flex items-center">
@@ -113,7 +167,9 @@ export default function QuizCreation() {
                         type="text"
                         placeholder={`Option ${optIndex + 1}`}
                         value={option}
-                        onChange={(e) => handleInputChange(e, index, `option-${optIndex}`)}
+                        onChange={(e) =>
+                          handleInputChange(e, index, `option-${optIndex}`)
+                        }
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                       />
                     </div>
@@ -122,14 +178,14 @@ export default function QuizCreation() {
               )}
 
               {/* Answer Selection */}
-              {question.type === 'multiple' && (
+              {question.type === "multiple" && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
                     Correct Answer
                   </label>
                   <select
                     value={question.answer}
-                    onChange={(e) => handleInputChange(e, index, 'answer')}
+                    onChange={(e) => handleInputChange(e, index, "answer")}
                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select correct answer</option>
@@ -143,24 +199,24 @@ export default function QuizCreation() {
               )}
 
               {/* True/False Answer */}
-              {question.type === 'trueFalse' && (
+              {question.type === "trueFalse" && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
                     Correct Answer
                   </label>
                   <select
                     value={question.answer}
-                    onChange={(e) => handleInputChange(e, index, 'answer')}
+                    onChange={(e) => handleInputChange(e, index, "answer")}
                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select correct answer</option>
-                    {question.type === 'multiple' &&
+                    {question.type === "multiple" &&
                       question.options.map((option, optIndex) => (
                         <option key={optIndex} value={option}>
                           {option}
                         </option>
                       ))}
-                    {question.type === 'trueFalse' && (
+                    {question.type === "trueFalse" && (
                       <>
                         <option value="True">True</option>
                         <option value="False">False</option>
