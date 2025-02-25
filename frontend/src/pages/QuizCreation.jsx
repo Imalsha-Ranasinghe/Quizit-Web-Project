@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FaPlus, FaTrash, FaCheckCircle } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaCheckCircle, FaCheck } from 'react-icons/fa';
 import Header from '../components/Header';
-import { FaPlus, FaTrash, FaCheck } from 'react-icons/fa';
+
 
 export default function QuizCreation() {
   const [questions, setQuestions] = useState([
