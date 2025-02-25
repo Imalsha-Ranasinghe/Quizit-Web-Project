@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaPlus, FaTrash, FaCheck } from "react-icons/fa";
 import Header from "../../components/Header";
+import axios from "axios";
 
 export default function QuizCreation() {
   const [questions, setQuestions] = useState([
@@ -59,6 +60,48 @@ export default function QuizCreation() {
     return questions.reduce((total, question) => total + question.marks, 0);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const quizData = {
+      title: quizTitle,
+      description,
+      difficultyLevel,
+      quizType,
+      quizCategory,
+      duration,
+      questions,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/quiz/create",
+        quizData
+      );
+      console.log("Quiz saved successfully:", response.data);
+      alert("Quiz saved successfully!");
+      // Reset form after submission
+      setQuizTitle("");
+      setDescription("");
+      setDifficultyLevel("beginner");
+      setQuizType("private");
+      setQuizCategory("knowledge");
+      setDuration(0);
+      setQuestions([
+        {
+          type: "multiple",
+          question: "",
+          options: ["", "", "", ""],
+          answer: "",
+          marks: 1,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      alert("Error saving quiz. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-green-100">
       <Header />
@@ -73,7 +116,7 @@ export default function QuizCreation() {
 
       {/* Quiz Form */}
       <div className="max-w-full mx-12 bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Quiz Title :
@@ -271,26 +314,24 @@ export default function QuizCreation() {
                     <option value="False">False</option>
                   </select>
                 </div>
-                
               )}
 
-{question.type === "shortAnswer" && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Correct Answer
-              </label>
-              <input
-                type="text"
-                value={question.answer}
-                onChange={(e) => handleInputChange(e, index, "answer")}
-                className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
-                placeholder="Enter the correct answer"
-              />
-            </div>
-          )}
+              {question.type === "shortAnswer" && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Correct Answer
+                  </label>
+                  <input
+                    type="text"
+                    value={question.answer}
+                    onChange={(e) => handleInputChange(e, index, "answer")}
+                    className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+                    placeholder="Enter the correct answer"
+                  />
+                </div>
+              )}
             </div>
           ))}
-          
 
           {/* Full Marks Section */}
           <div className="mb-6 p-6 bg-gray-100 rounded-xl shadow-sm border border-gray-300">

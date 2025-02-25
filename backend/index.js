@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db.js");
 
 const authRoutes = require("./routes/authRoutes.js");
+const quizRoutes = require("./routes/quizRoutes.js");
 
 const app = express();
 
@@ -16,6 +17,7 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/quiz", quizRoutes);
 
 app.get("/", (req, res) => {
   res.send("Quiz API is running...");

@@ -18,7 +18,7 @@ export default function Home() {
         </p>
 
         <div className="mb-8">
-          <Link to={"/my-quizzes"} className="bg-green-600 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-700">
+          <Link to={"/quiz-list"} className="bg-green-600 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-700">
             Start Quiz
           </Link>
         </div>
