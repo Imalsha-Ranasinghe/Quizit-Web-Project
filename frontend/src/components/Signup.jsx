@@ -1,8 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Signup() {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();  // Using navigate hook for redirection after successful signup
+
+  // Handle form data changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { username, email, password } = formData;
+
+    // Check if all fields are filled out
+    if (!username || !email || !password) {
+      setErrorMessage("All fields are required");
+      return;
+    }
+
+    try {
+      // Send POST request to backend API
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Successfully registered, handle success
+        console.log("User registered:", data.message);
+
+        // Redirect to login page after successful registration
+        navigate("/login");
+      } else {
+        // Handle error response
+        setErrorMessage(data.error || "Registration failed");
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+      setErrorMessage("An error occurred while registering");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br  flex flex-col">
       {/* Header Component */}
@@ -20,24 +79,29 @@ export default function Login() {
               Create an Account
             </h2>
             <p className="text-gray-600 text-center mt-2">
-            Join us and start your journey today!
+              Join us and start your journey today!
             </p>
 
-            <form className="mt-6">
-            <div className="mb-4">
+            <form onSubmit={handleSubmit} className="mt-6">
+              {/* Full Name Field */}
+              <div className="mb-4">
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Full Name
                 </label>
                 <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                 />
               </div>
+
               {/* Email Field */}
               <div className="mb-4">
                 <label
@@ -49,6 +113,9 @@ export default function Login() {
                 <input
                   type="email"
                   id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Enter your email"
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                 />
@@ -65,15 +132,20 @@ export default function Login() {
                 <input
                   type="password"
                   id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="Enter your password"
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                 />
               </div>
 
-              
-              
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
+              )}
 
-              {/* Login Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-md transition"
@@ -89,7 +161,7 @@ export default function Login() {
               <hr className="flex-grow border-t border-gray-300" />
             </div>
 
-            {/* Social Login */}
+            {/* Social Login Buttons */}
             <div className="flex justify-center space-x-4">
               <button className="flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition">
                 <img
