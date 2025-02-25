@@ -1,16 +1,11 @@
 pipeline {
     agent any
 
-    environment {
-        MONGO_URI = credentials('MONGO_URI')
-        JWT_SECRET = credentials('NINADA_IMALSHA')
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
                 retry(3) {
-                    git branch: 'test', url: 'https://github.com/Imalsha-Ranasinghe/Quizit-Web-Project'
+                    git branch: 'testquizit-pipeline', url: 'https://github.com/Imalsha-Ranasinghe/Quizit-Web-Project'
                 }
             }
         }
@@ -19,15 +14,14 @@ pipeline {
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
-                        string(credentialsId: 'NINADA_IMALSHA', variable: 'JWT_SECRET')
+                        string(credentialsId: 'mongo-uri', variable: 'MONGO_URI'),
+                        string(credentialsId: 'jwt-secret', variable: 'JWT_SECRET')
                     ]) {
-                        // Handle different OS environments
                         if (isUnix()) {
                             sh '''
                             cd backend
-                            export MONGO_URI=${MONGO_URI}
-                            export JWT_SECRET=${JWT_SECRET}
+                            export MONGO_URI=$MONGO_URI
+                            export JWT_SECRET=$JWT_SECRET
                             npm install
                             npm run build
                             '''
@@ -48,7 +42,6 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Handle different OS environments for tests
                     if (isUnix()) {
                         sh '''
                         cd backend
@@ -67,15 +60,12 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    // Handle Docker commands with retry in case of failures
-                    if (isUnix()) {
-                        sh '''
-                        docker-compose build
-                        '''
-                    } else {
-                        bat '''
-                        docker-compose build
-                        '''
+                    retry(2) {
+                        if (isUnix()) {
+                            sh 'docker-compose build'
+                        } else {
+                            bat 'docker-compose build'
+                        }
                     }
                 }
             }
@@ -84,18 +74,32 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy using Docker Compose with retry for failures
-                    if (isUnix()) {
-                        sh '''
-                        docker-compose up -d
-                        '''
-                    } else {
-                        bat '''
-                        docker-compose up -d
-                        '''
+                    retry(2) {
+                        if (isUnix()) {
+                            sh 'docker-compose up -d'
+                        } else {
+                            bat 'docker-compose up -d'
+                        }
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline execution completed."
+            echo "Cleaning up resources..."
+            script {
+                if (isUnix()) {
+                    sh 'docker-compose down'
+                } else {
+                    bat 'docker-compose down'
+                }
+            }
+        }
+        failure {
+            echo "Pipeline failed! Check logs for errors."
         }
     }
 }
