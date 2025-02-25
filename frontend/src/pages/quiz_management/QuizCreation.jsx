@@ -1,16 +1,34 @@
 import React, { useState } from "react";
-import { FaPlus, FaTrash, FaCheckCircle, FaCheck } from "react-icons/fa";
+import { FaPlus, FaTrash, FaCheck } from "react-icons/fa";
 import Header from "../../components/Header";
 
 export default function QuizCreation() {
   const [questions, setQuestions] = useState([
-    { type: "multiple", question: "", options: ["", "", "", ""], answer: "" },
+    {
+      type: "multiple",
+      question: "",
+      options: ["", "", "", ""],
+      answer: "",
+      marks: 1,
+    },
   ]);
+  const [quizTitle, setQuizTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficultyLevel, setDifficultyLevel] = useState("beginner");
+  const [quizType, setQuizType] = useState("private");
+  const [quizCategory, setQuizCategory] = useState("knowledge");
+  const [duration, setDuration] = useState(0);
 
   const handleAddQuestion = () => {
     setQuestions([
       ...questions,
-      { type: "multiple", question: "", options: ["", "", "", ""], answer: "" },
+      {
+        type: "multiple",
+        question: "",
+        options: ["", "", "", ""],
+        answer: "",
+        marks: 1,
+      },
     ]);
   };
 
@@ -28,11 +46,17 @@ export default function QuizCreation() {
       updatedQuestions[index].answer = e.target.value;
     } else if (field === "type") {
       updatedQuestions[index].type = e.target.value;
+    } else if (field === "marks") {
+      updatedQuestions[index].marks = parseInt(e.target.value, 10);
     } else {
       const optionIndex = parseInt(field.split("-")[1], 10);
       updatedQuestions[index].options[optionIndex] = e.target.value;
     }
     setQuestions(updatedQuestions);
+  };
+
+  const calculateFullMarks = () => {
+    return questions.reduce((total, question) => total + question.marks, 0);
   };
 
   return (
@@ -57,6 +81,8 @@ export default function QuizCreation() {
             <input
               type="text"
               placeholder="Enter the quiz title"
+              value={quizTitle}
+              onChange={(e) => setQuizTitle(e.target.value)}
               className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
             />
             <label className="block text-sm font-medium text-gray-700 mt-4">
@@ -65,14 +91,17 @@ export default function QuizCreation() {
             <input
               type="text"
               placeholder="Enter the description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+            <label className="block text-sm font-medium text-gray-700 mt-4">
               Difficulty Level
             </label>
             <select
-              onChange={(e) => handleInputChange(e, index, "type")}
+              value={difficultyLevel}
+              onChange={(e) => setDifficultyLevel(e.target.value)}
               className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
             >
               <option value="beginner">Beginner</option>
@@ -80,22 +109,24 @@ export default function QuizCreation() {
               <option value="difficult">Difficult</option>
             </select>
 
-            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+            <label className="block text-sm font-medium text-gray-700 mt-4">
               Quiz Type
             </label>
             <select
-              onChange={(e) => handleInputChange(e, index, "type")}
+              value={quizType}
+              onChange={(e) => setQuizType(e.target.value)}
               className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
             >
               <option value="private">Private</option>
               <option value="public">Public</option>
             </select>
 
-            <label className="block text-sm font-medium text-gray-700 mt-4 ">
+            <label className="block text-sm font-medium text-gray-700 mt-4">
               Quiz Category
             </label>
             <select
-              onChange={(e) => handleInputChange(e, index, "type")}
+              value={quizCategory}
+              onChange={(e) => setQuizCategory(e.target.value)}
               className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
             >
               <option value="knowledge">General Knowledge</option>
@@ -104,20 +135,32 @@ export default function QuizCreation() {
               <option value="history">General History</option>
               <option value="other">Other</option>
             </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Duration (in minutes)
+            </label>
+            <input
+              type="number"
+              placeholder="Enter quiz duration"
+              value={duration}
+              onChange={(e) => setDuration(parseInt(e.target.value, 10))}
+              className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+            />
           </div>
+
           {questions.map((question, index) => (
             <div
               key={index}
               className="mb-6 p-6 bg-gray-100 rounded-xl shadow-sm border border-gray-300"
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-semibold text-green-700">
+                <h3 className="text-xl font-semibold text-green-700">
                   Question {index + 1}
                 </h3>
                 <button
                   type="button"
                   onClick={() => handleRemoveQuestion(index)}
-                  className="text-red-600 hover:text-red-700 text-lg flex items-center"
+                  className="text-red-600 hover:text-red-700 text-base font-bold flex items-center"
                 >
                   <FaTrash className="mr-1" />
                   Remove
@@ -154,6 +197,20 @@ export default function QuizCreation() {
                   placeholder="Enter your question"
                   value={question.question}
                   onChange={(e) => handleInputChange(e, index, "question")}
+                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
+
+              {/* Marks Input */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Marks
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter marks for this question"
+                  value={question.marks}
+                  onChange={(e) => handleInputChange(e, index, "marks")}
                   className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                 />
               </div>
@@ -210,23 +267,37 @@ export default function QuizCreation() {
                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select correct answer</option>
-                    {question.type === "multiple" &&
-                      question.options.map((option, optIndex) => (
-                        <option key={optIndex} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    {question.type === "trueFalse" && (
-                      <>
-                        <option value="True">True</option>
-                        <option value="False">False</option>
-                      </>
-                    )}
+                    <option value="True">True</option>
+                    <option value="False">False</option>
                   </select>
                 </div>
+                
               )}
+
+{question.type === "shortAnswer" && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Correct Answer
+              </label>
+              <input
+                type="text"
+                value={question.answer}
+                onChange={(e) => handleInputChange(e, index, "answer")}
+                className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter the correct answer"
+              />
+            </div>
+          )}
             </div>
           ))}
+          
+
+          {/* Full Marks Section */}
+          <div className="mb-6 p-6 bg-gray-100 rounded-xl shadow-sm border border-gray-300">
+            <h3 className="text-base font-semibold text-slate-700">
+              Total Marks: {calculateFullMarks()}
+            </h3>
+          </div>
 
           {/* Add Question Button */}
           <button
