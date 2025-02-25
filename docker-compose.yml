@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb+srv://ninada:6vHGa6tte7glAo45@cluster0.w3g4i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - NODE_ENV=production
