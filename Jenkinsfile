@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        MONGO_URI = credentials('mongodb+srv://ninada:6vHGa6tte7glAo45@cluster0.w3g4i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+        MONGO_URI = credentials('MONGO_URI')
         JWT_SECRET = credentials('NINADA_IMALSHA')
     }
 
@@ -15,14 +15,21 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-                script {
-                    sh '''
-                    cd backend
-                    npm install
-                    npm run build
-                    '''
-                }
+        script {
+            withCredentials([
+                string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI'),
+                string(credentialsId: 'NINADA_IMALSHA', variable: 'JWT_SECRET')
+            ]) {
+                sh '''
+                cd backend
+                export MONGO_URI=${MONGO_URI}
+                export JWT_SECRET=${JWT_SECRET}
+                npm install
+                npm run build
+                '''
             }
+        }
+    }
         }
 
         stage('Run Tests') {
