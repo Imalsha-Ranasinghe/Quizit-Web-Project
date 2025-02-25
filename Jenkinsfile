@@ -9,7 +9,9 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Imalsha-Ranasinghe/Quizit-Web-Project'
+                retry(3){
+                    git branch:'test', url:'https://github.com/Imalsha-Ranasinghe/Quizit-Web-Project'
+                }                
             }
         }
 
