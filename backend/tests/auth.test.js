@@ -1,6 +1,8 @@
 const request = require("supertest");
 const { app, server } = require("../index.js"); // Import app and server
 const User = require("../models/User.js");
+require("dotenv").config();
+
 
 describe("Auth API Tests", () => {
   const testUser = {
@@ -9,14 +11,15 @@ describe("Auth API Tests", () => {
     password: "testpassword",
   };
 
-  // Clear the database before running tests
-  beforeAll(async () => {
+  // Clear the database before each test to ensure a fresh state
+  beforeEach(async () => {
     await User.deleteMany({});
   });
 
-  // Close the server after all tests are done
+  // Close the server after all tests
   afterAll(async () => {
-    await server.close();
+    await mongoose.connection.close();
+    await new Promise((resolve) => server.close(resolve)); // Properly closes server
   });
 
   // Test the /register endpoint
@@ -35,13 +38,12 @@ describe("Auth API Tests", () => {
       expect(user.username).toBe(testUser.username);
     });
 
-    it("should return 500 if registration fails", async () => {
-      // Simulate a failure by sending invalid data
+    it("should return 400 if registration data is missing", async () => {
       const res = await request(app)
         .post("/api/auth/register")
         .send({}); // Missing required fields
 
-      expect(res.statusCode).toEqual(500);
+      expect(res.statusCode).toEqual(400); // Change from 500 to 400 (bad request)
       expect(res.body).toHaveProperty("error");
     });
   });

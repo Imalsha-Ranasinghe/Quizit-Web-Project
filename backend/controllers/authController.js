@@ -9,6 +9,11 @@ exports.register = async (req, res) => {
     // Debugging: check incoming data
     console.log(req.body);
 
+    const userExists = await User.findOne({ username });
+    if (userExists) {
+      return res.status(400).json({ error: "Username is already taken." });
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
