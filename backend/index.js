@@ -23,6 +23,11 @@ app.get("/", (req, res) => {
   res.send("Quiz API is running...");
 });
 
+if (process.env.NODE_ENV !== "test") {
+  server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 const PORT = process.env.PORT || 5000;
 
 // Store the server instance in a variable
