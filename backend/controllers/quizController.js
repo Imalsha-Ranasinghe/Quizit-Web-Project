@@ -4,7 +4,6 @@ const createQuiz = async (req, res) => {
   try {
     const { title, description, difficultyLevel, quizType, quizCategory, duration, questions } = req.body;
 
-    // Calculate total marks
     const totalMarks = questions.reduce((total, question) => total + question.marks, 0);
 
     const newQuiz = new Quiz({
@@ -34,6 +33,18 @@ const getQuizzes = async (req, res) => {
   }
 };
 
+const getQuizById = async (req, res) => {
+  const { quizId } = req.params;
+  try {
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+    return res.status(200).json(quiz);
+  } catch (error) {
+    console.error('Error fetching quiz:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
 
-
-module.exports = { createQuiz, getQuizzes };
+module.exports = { createQuiz, getQuizzes, getQuizById };
