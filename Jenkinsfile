@@ -73,7 +73,7 @@ EOF
 
                                 # Start containers using docker-compose
                                 docker-compose up -d
-                            EOF
+EOF
                         """
                     }
                 }
