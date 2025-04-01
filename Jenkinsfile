@@ -37,25 +37,26 @@ pipeline {
             }
         }
 
-        stage('Clone Repo on EC2') {  // 🔹 New stage added here
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
-                                # Ensure Git is installed
-                                sudo apt-get update -y
-                                sudo apt-get install -y git
+        stage('Clone Repo on EC2') {
+    steps {
+        script {
+            withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
+                sh """
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} <<EOF
+                    # Ensure Git is installed
+                    sudo apt-get update -y
+                    sudo apt-get install -y git
 
-                                # Remove existing repo and clone the latest version
-                                rm -rf ~/Quizit-Web-Project
-                                git clone ${GITHUB_REPO} ~/Quizit-Web-Project
-                            EOF
-                        """
-                    }
-                }
+                    # Remove existing repo and clone the latest version
+                    rm -rf ~/Quizit-Web-Project
+                    git clone ${GITHUB_REPO} ~/Quizit-Web-Project
+                    EOF
+                """
             }
         }
+    }
+}
+
 
         stage('Deploy to EC2') {
             steps {
