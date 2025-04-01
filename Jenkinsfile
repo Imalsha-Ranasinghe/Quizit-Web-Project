@@ -50,7 +50,7 @@ pipeline {
                     # Remove existing repo and clone the latest version
                     rm -rf ~/Quizit-Web-Project
                     git clone ${GITHUB_REPO} ~/Quizit-Web-Project
-                    EOF
+EOF
                 """
             }
         }
