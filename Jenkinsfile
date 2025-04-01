@@ -10,6 +10,12 @@ pipeline {
     }
 
     stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: "${GITHUB_REPO}"
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 script {
@@ -31,34 +37,46 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
-    steps {
-        script {
-            withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
-                        # Ensure Git is installed
-                        sudo apt-get update -y
-                        sudo apt-get install -y git
+        stage('Clone Repo on EC2') {  // 🔹 New stage added here
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
+                                # Ensure Git is installed
+                                sudo apt-get update -y
+                                sudo apt-get install -y git
 
-                        # Remove existing repo (if any) and clone the latest version
-                        rm -rf ~/Quizit-Web-Project
-                        git clone ${GITHUB_REPO} ~/Quizit-Web-Project
-
-                        # Navigate to the repo directory
-                        cd ~/Quizit-Web-Project
-
-                        # Pull the latest Docker images
-                        docker pull ${DOCKER_IMAGE_BACKEND}
-                        docker pull ${DOCKER_IMAGE_FRONTEND}
-
-                        # Start containers using docker-compose
-                        docker-compose up -d
-                    EOF
-                """
+                                # Remove existing repo and clone the latest version
+                                rm -rf ~/Quizit-Web-Project
+                                git clone ${GITHUB_REPO} ~/Quizit-Web-Project
+                            EOF
+                        """
+                    }
+                }
             }
         }
-    }
-}
+
+        stage('Deploy to EC2') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
+                                # Navigate to repo
+                                cd ~/Quizit-Web-Project
+
+                                # Pull the latest Docker images
+                                docker pull ${DOCKER_IMAGE_BACKEND}
+                                docker pull ${DOCKER_IMAGE_FRONTEND}
+
+                                # Start containers using docker-compose
+                                docker-compose up -d
+                            EOF
+                        """
+                    }
+                }
+            }
+        }
     }
 }
