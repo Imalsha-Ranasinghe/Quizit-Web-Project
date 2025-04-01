@@ -10,12 +10,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git branch: 'main', url: "${GITHUB_REPO}"
-            }
-        }
-
         stage('Build Docker Images') {
             steps {
                 script {
@@ -43,8 +37,15 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
+                                # Clone the repository on EC2 instance
+                                git clone ${GITHUB_REPO} /home/ubuntu/quizit-web-project
+                                cd /home/ubuntu/quizit-web-project
+
+                                # Pull Docker images
                                 docker pull ${DOCKER_IMAGE_BACKEND}
                                 docker pull ${DOCKER_IMAGE_FRONTEND}
+
+                                # Run Docker Compose
                                 docker-compose up -d
                             EOF
                         """
