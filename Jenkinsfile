@@ -32,26 +32,33 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
-                                # Clone the repository on EC2 instance
-                                git clone ${GITHUB_REPO} /home/ubuntu/quizit-web-project
-                                cd /home/ubuntu/quizit-web-project
+    steps {
+        script {
+            withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
+                sh """
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
+                        # Ensure Git is installed
+                        sudo apt-get update -y
+                        sudo apt-get install -y git
 
-                                # Pull Docker images
-                                docker pull ${DOCKER_IMAGE_BACKEND}
-                                docker pull ${DOCKER_IMAGE_FRONTEND}
+                        # Remove existing repo (if any) and clone the latest version
+                        rm -rf ~/Quizit-Web-Project
+                        git clone ${GITHUB_REPO} ~/Quizit-Web-Project
 
-                                # Run Docker Compose
-                                docker-compose up -d
-                            EOF
-                        """
-                    }
-                }
+                        # Navigate to the repo directory
+                        cd ~/Quizit-Web-Project
+
+                        # Pull the latest Docker images
+                        docker pull ${DOCKER_IMAGE_BACKEND}
+                        docker pull ${DOCKER_IMAGE_FRONTEND}
+
+                        # Start containers using docker-compose
+                        docker-compose up -d
+                    EOF
+                """
             }
         }
+    }
+}
     }
 }
