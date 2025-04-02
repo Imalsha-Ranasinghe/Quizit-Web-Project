@@ -3,13 +3,14 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 const QuizDetail = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { id } = useParams();
   const [quiz, setQuiz] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/quizzes/${id}`);
+        const response = await axios.get(`${API_URL}/api/quizzes/${id}`);
         setQuiz(response.data);
       } catch (error) {
         console.error("Error fetching quiz:", error);

@@ -4,6 +4,8 @@ import Header from "../../components/Header";
 import axios from "axios";
 
 export default function QuizCreation() {
+
+  const API_URL = process.env.REACT_APP_API_URL;
   const [questions, setQuestions] = useState([
     {
       type: "multiple",
@@ -75,7 +77,7 @@ export default function QuizCreation() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/quiz/create",
+        `${API_URL}/api/quiz/create`,
         quizData
       );
       console.log("Quiz saved successfully:", response.data);

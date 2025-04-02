@@ -4,11 +4,12 @@ import { Link } from "react-router-dom";
 
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/quiz/quizzes");
+        const response = await axios.get(`${API_URL}/api/quiz/quizzes`);
         setQuizzes(response.data);
       } catch (error) {
         console.error("Error fetching quizzes:", error);

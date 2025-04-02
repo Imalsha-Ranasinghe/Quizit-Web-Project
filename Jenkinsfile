@@ -67,12 +67,19 @@ EOF
                                 # Navigate to repo
                                 cd ~/Quizit-Web-Project
 
+                                 # Update the .env file
+                                echo "REACT_APP_API_URL=http://${EC2_IP}:5000" > .env
+
+                                # Build the frontend
+                                npm install
+                                npm run build
+
                                 # Pull the latest Docker images
                                 docker pull ${DOCKER_IMAGE_BACKEND}
                                 docker pull ${DOCKER_IMAGE_FRONTEND}
 
                                 # Start containers using docker-compose
-                                docker-compose up -d
+                                docker-compose up -d --build
 EOF
                         """
                     }
