@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import QuizCreation from "./pages/quiz_management/QuizCreation";
 import QuizList from "./pages/quiz_management/QuizList";
 import QuizDetail from "./components/QuizDetail";
+import Profile from "./components/Profile";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/create-quiz" element={<QuizCreation />} />
         <Route path="/quiz-list" element={<QuizList/>} />
         <Route path="/quiz/:id" element={<QuizDetail />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     
   );
