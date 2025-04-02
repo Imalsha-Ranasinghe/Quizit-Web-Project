@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",

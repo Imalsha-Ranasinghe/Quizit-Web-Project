@@ -3,7 +3,8 @@ import Header from "./Header";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
-  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable for API URL
+  const API_URL = import.meta.env.VITE_API_URL;
+ // Use environment variable for API URL
   const [formData, setFormData] = useState({
     username: "",
     email: "",
