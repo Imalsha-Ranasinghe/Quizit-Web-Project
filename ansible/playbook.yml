@@ -1,0 +1,21 @@
+- hosts: mern-app
+  become: yes
+  tasks:
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+    - name: Clone the MERN App Repository
+      git:
+        repo: "https://github.com/Imalsha-Ranasinghe/Quizit-Web-Project.git"
+        dest: "/home/ubuntu/mern-app"
+        version: using-Teransi
+
+    - name: Copy the .env File
+      copy:
+        src: ../backend/.env
+        dest: "/home/ubuntu/mern-app/backend/.env"
+
+    - name: Build and Run Docker Containers
+      command: docker-compose -f /home/ubuntu/mern-app/docker-compose.yml up --build -d

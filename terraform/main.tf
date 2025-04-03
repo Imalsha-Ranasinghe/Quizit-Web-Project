@@ -1,22 +1,20 @@
 provider "aws" {
-  region = "eu-north-1"  # Updated to your region
+  region = "eu-north-1"
 }
 
-resource "aws_vpc" "main_vpc" {
-  # Use your existing VPC ID
-  id = "vpc-06aac4cda7ff94b9c"
-}
+resource "aws_security_group" "allow_custom_ports" {
+  name        = "allow_custom_ports"
+  description = "Allow inbound traffic for custom ports"
 
-resource "aws_subnet" "public_subnet" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-  availability_zone = "eu-north-1a"  # Updated to match your region
-}
+  // Allow SSH access
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-resource "aws_security_group" "load_balancer_sg" {
-  vpc_id = aws_vpc.main_vpc.id
-
+  // Allow HTTP access (port 80)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -24,24 +22,73 @@ resource "aws_security_group" "load_balancer_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  // Allow custom port 5000
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // Allow custom port 5173
+  ingress {
+    from_port   = 5173
+    to_port     = 5173
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // Allow HTTPS access (port 443)
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // Allow other ports as needed (e.g., 8080)
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // Egress rule to allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = "-1" # -1 means all protocols
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-resource "aws_lb" "app_lb" {
-  name               = "quizit-lb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.load_balancer_sg.id]
-  subnets            = [aws_subnet.public_subnet.id]
+resource "aws_instance" "mern_app" {
+  ami                    = "ami-011e54f70c1c91e17" # Example Ubuntu AMI
+  instance_type          = "t3.micro"
+  key_name               = "quizit_key" # Replace with your key pair name
+  vpc_security_group_ids = [aws_security_group.allow_custom_ports.id]
+  tags = {
+    Name = "MERN-App-Server"
+  }
 
-  enable_deletion_protection = false
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo apt update -y
+              sudo apt install -y docker.io docker-compose
+              sudo systemctl enable docker
+              sudo systemctl start docker
+              sudo apt install -y ansible
+              EOF
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("D:/6th sem/DevOps/quizit_key.pem")
+    host        = self.public_ip
+  }
 }
 
-output "load_balancer_dns" {
-  value = aws_lb.app_lb.dns_name
+output "instance_ip" {
+  value = aws_instance.mern_app.public_ip
 }

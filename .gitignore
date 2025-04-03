@@ -1,0 +1,13 @@
+# Ignore Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+
+# Ignore SSH keys
+*.pem
+*.ppk
+
+# Ignore Ansible-generated logs
+*.log
+
+
