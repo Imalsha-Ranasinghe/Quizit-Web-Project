@@ -90,28 +90,5 @@ EOF
                 }
             }
         }
-
-        stage('Monitoring Setup') {
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
-                                cd ~/Quizit-Web-Project
-
-                                # Pull monitoring services
-                                docker pull prom/prometheus
-                                docker pull grafana/grafana
-                                docker pull prom/node-exporter
-
-                                # Start Prometheus, Grafana, and Node Exporter
-                                docker-compose -f docker-compose.monitoring.yml down
-                                docker-compose -f docker-compose.monitoring.yml up -d
-EOF
-                        """
-                    }
-                }
-            }
-        }
     }
 }
