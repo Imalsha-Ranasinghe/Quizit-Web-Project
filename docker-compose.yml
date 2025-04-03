@@ -18,7 +18,7 @@ services:
       - MONGO_URI=mongodb+srv://ninada:6vHGa6tte7glAo45@cluster0.w3g4i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       - NODE_ENV=production
 
-  prometheus:
+prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
@@ -29,7 +29,7 @@ services:
     networks:
       - monitoring
 
-  grafana:
+grafana:
     image: grafana/grafana
     ports:
       - "3001:3000"
@@ -40,7 +40,7 @@ services:
     networks:
       - monitoring
 
-  node-exporter:
+node-exporter:
     image: prom/node-exporter
     ports:
       - "9100:9100"
