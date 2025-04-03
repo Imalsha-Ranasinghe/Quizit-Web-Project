@@ -59,36 +59,42 @@ EOF
 
 
         stage('Deploy to EC2') {
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
-                                # Navigate to repo
-                                cd ~/Quizit-Web-Project
+    steps {
+        script {
+            withCredentials([sshUserPrivateKey(credentialsId: 'quizit-ssh', keyFileVariable: 'SSH_KEY_FILE')]) {
+                sh """
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
+                        # Update Node.js to version 20
+                        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                        sudo apt-get install -y nodejs
+                        
+                        # Navigate to repo
+                        cd ~/Quizit-Web-Project
 
-                                 # Update the .env file
-                                echo "VITE_API_URL=http://${EC2_IP}:5000" > ~/Quizit-Web-Project/frontend/.env
+                        # Update the .env file
+                        echo "VITE_API_URL=http://${EC2_IP}:5000" > ~/Quizit-Web-Project/frontend/.env
 
-                                # Build the frontend
-                                cd ~/Quizit-Web-Project/frontend
-                                rm -rf dist node_modules
-                                npm install
-                                npm run build
+                        # Build the frontend
+                        cd ~/Quizit-Web-Project/frontend
+                        rm -rf dist node_modules
+                        npm install
+                        npm run build
 
-                                # Pull the latest Docker images
-                                docker pull ${DOCKER_IMAGE_BACKEND}
-                                docker pull ${DOCKER_IMAGE_FRONTEND}
+                        # Pull the latest Docker images
+                        docker pull ${DOCKER_IMAGE_BACKEND}
+                        docker pull ${DOCKER_IMAGE_FRONTEND}
 
-                                # Start containers using docker-compose
-                                cd ~/Quizit-Web-Project
-                                docker-compose down
-                                docker-compose up -d --build
+                        # Start containers using docker-compose
+                        cd ~/Quizit-Web-Project
+                        docker-compose down
+                        docker-compose up -d --build
 EOF
-                        """
-                    }
-                }
+                """
             }
         }
+    }
+}
+
+
     }
 }
