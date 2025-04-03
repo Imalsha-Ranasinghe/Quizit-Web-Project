@@ -66,6 +66,9 @@ EOF
                             ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
                                 # Navigate to repo
                                 cd ~/Quizit-Web-Project
+                                # Install Node.js and npm
+                                sudo apt update -y
+                                sudo apt install -y nodejs npm
 
                                  # Update the .env file
                                 echo "VITE_API_URL=http://${EC2_IP}:5000" > ~/Quizit-Web-Project/frontend/.env
@@ -98,7 +101,7 @@ EOF
                         sh """
                             ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_FILE} ${EC2_USER}@${EC2_IP} << 'EOF'
                                 cd ~/Quizit-Web-Project
-
+                                
                                 # Pull monitoring services
                                 docker pull prom/prometheus
                                 docker pull grafana/grafana
