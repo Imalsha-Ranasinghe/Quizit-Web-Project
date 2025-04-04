@@ -18,7 +18,7 @@ export default function Home() {
         </p>
 
         <div className="mb-8">
-          <Link to={"/quiz-list"} className="bg-green-600 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-700">
+          <Link to={"/quiz-list"} className="bg-blue-600 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-700">
             Start Quiz
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default function Home() {
           <p className="mb-4 text-green-700">
             Test your knowledge with today's special quiz!
           </p>
-          <button className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-700">
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-700">
             Start Challenge
           </button>
         </div>
