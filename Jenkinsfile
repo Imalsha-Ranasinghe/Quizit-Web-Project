@@ -6,7 +6,7 @@ pipeline {
         DOCKER_IMAGE_BACKEND = 'imalsha119/quizit-web-project-backend'
         DOCKER_IMAGE_FRONTEND = 'imalsha119/quizit-web-project-frontend'
         EC2_USER = 'ubuntu'
-        EC2_IP = '13.60.45.115'
+        EC2_IP = '51.21.199.245'
     }
 
     stages {
